@@ -74,18 +74,31 @@
     }
 
     .buttons button {
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      background-color: #333;
-      color: white;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      padding: 12px 24px;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: 3px dashed #ff69b4;
+      border-radius: 12px;
+      background-color: #ffff00;
+      color: #ff1493;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      box-shadow: 0 0 10px #ff69b4;
     }
 
     .buttons button:hover {
-      background-color: #555;
+      background-color: #ffb6c1;
+      transform: scale(1.1) rotate(-5deg);
+      animation: wiggle 0.4s ease-in-out;
+    }
+
+    @keyframes wiggle {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+      75% { transform: rotate(3deg); }
+      100% { transform: rotate(0deg); }
     }
 
     .intro {
