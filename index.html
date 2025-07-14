@@ -15,6 +15,20 @@
       justify-content: center;
       height: 100vh;
       overflow: hidden;
+      transition: background 0.5s ease;
+    }
+
+    body.rainbow {
+      animation: rainbowBG 1s linear infinite;
+    }
+
+    @keyframes rainbowBG {
+      0%   { background-color: #ff0000; }
+      20%  { background-color: #ff9900; }
+      40%  { background-color: #ffff00; }
+      60%  { background-color: #33cc33; }
+      80%  { background-color: #3399ff; }
+      100% { background-color: #cc33cc; }
     }
 
     h1 {
@@ -107,11 +121,14 @@
 
   <script>
     let count = 0;
-    let power = 1;
+    let basePower = 1;
+    let power = basePower;
+    let frenzyActive = false;
 
     const counter = document.getElementById('clickCount');
     const powerDisplay = document.getElementById('clickPower');
     const image = document.querySelector('.clickable');
+    const body = document.body;
 
     function handleClick(e) {
       count += power;
@@ -119,7 +136,7 @@
 
       // Reset and replay animation
       image.classList.remove('silly');
-      void image.offsetWidth; // Force reflow
+      void image.offsetWidth;
       image.classList.add('silly');
 
       // Sparkle effect
@@ -129,17 +146,36 @@
       sparkle.style.left = `${e.clientX}px`;
       sparkle.style.top = `${e.clientY}px`;
       document.body.appendChild(sparkle);
-
       setTimeout(() => sparkle.remove(), 400);
+
+      // 1 in 50 chance for rainbow frenzy
+      if (!frenzyActive && Math.random() < 1 / 50) {
+        activateFrenzy();
+      }
     }
 
     function upgradePower(type) {
       if (type === 'double') {
-        power *= 2;
+        basePower *= 2;
       } else {
-        power += type;
+        basePower += type;
       }
+      if (!frenzyActive) power = basePower;
       powerDisplay.textContent = power;
+    }
+
+    function activateFrenzy() {
+      frenzyActive = true;
+      power = basePower * 25;
+      powerDisplay.textContent = power;
+      body.classList.add('rainbow');
+
+      setTimeout(() => {
+        frenzyActive = false;
+        power = basePower;
+        powerDisplay.textContent = power;
+        body.classList.remove('rainbow');
+      }, 5000); // Frenzy lasts 5 seconds
     }
   </script>
 
