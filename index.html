@@ -105,9 +105,51 @@
     .upgrades button:hover {
       transform: scale(1.05);
     }
+
+    .frenzy-banner {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      padding: 10px;
+      background: transparent;
+      animation: rainbowText 1s linear infinite;
+      z-index: 1000;
+    }
+
+    @keyframes rainbowText {
+      0%   { color: red; }
+      20%  { color: orange; }
+      40%  { color: yellow; }
+      60%  { color: green; }
+      80%  { color: blue; }
+      100% { color: violet; }
+    }
+
+    .frenzy-timer {
+      position: fixed;
+      bottom: 10px;
+      right: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      background-color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
+
+  <div class="frenzy-banner hidden" id="frenzyBanner">🌈 FRENZY MODE! 🌈</div>
+  <div class="frenzy-timer hidden" id="frenzyTimer">5s</div>
 
   <h1>Disc Clicker</h1>
   <div class="counter">Clicks: <span id="clickCount">0</span></div>
@@ -124,22 +166,24 @@
     let basePower = 1;
     let power = basePower;
     let frenzyActive = false;
+    let frenzyDuration = 5;
+    let frenzyTimerInterval;
 
     const counter = document.getElementById('clickCount');
     const powerDisplay = document.getElementById('clickPower');
     const image = document.querySelector('.clickable');
     const body = document.body;
+    const banner = document.getElementById('frenzyBanner');
+    const timer = document.getElementById('frenzyTimer');
 
     function handleClick(e) {
       count += power;
       counter.textContent = count;
 
-      // Reset and replay animation
       image.classList.remove('silly');
       void image.offsetWidth;
       image.classList.add('silly');
 
-      // Sparkle effect
       const sparkle = document.createElement('div');
       sparkle.className = 'sparkle';
       sparkle.textContent = `+${power}`;
@@ -148,7 +192,6 @@
       document.body.appendChild(sparkle);
       setTimeout(() => sparkle.remove(), 400);
 
-      // 1 in 50 chance for rainbow frenzy
       if (!frenzyActive && Math.random() < 1 / 50) {
         activateFrenzy();
       }
@@ -169,13 +212,28 @@
       power = basePower * 25;
       powerDisplay.textContent = power;
       body.classList.add('rainbow');
+      banner.classList.remove('hidden');
+      timer.classList.remove('hidden');
+      timer.textContent = `${frenzyDuration}s`;
 
-      setTimeout(() => {
-        frenzyActive = false;
-        power = basePower;
-        powerDisplay.textContent = power;
-        body.classList.remove('rainbow');
-      }, 5000); // Frenzy lasts 5 seconds
+      let timeLeft = frenzyDuration;
+      frenzyTimerInterval = setInterval(() => {
+        timeLeft--;
+        timer.textContent = `${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(frenzyTimerInterval);
+          deactivateFrenzy();
+        }
+      }, 1000);
+    }
+
+    function deactivateFrenzy() {
+      frenzyActive = false;
+      power = basePower;
+      powerDisplay.textContent = power;
+      body.classList.remove('rainbow');
+      banner.classList.add('hidden');
+      timer.classList.add('hidden');
     }
   </script>
 
