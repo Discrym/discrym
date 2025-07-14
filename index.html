@@ -25,8 +25,14 @@
 
     .counter {
       font-size: 1.5em;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       color: #555;
+    }
+
+    .power {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #777;
     }
 
     .clickable {
@@ -34,16 +40,11 @@
       height: auto;
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: transform 0.1s ease;
       cursor: pointer;
     }
 
-    .clickable:active {
-      transform: scale(0.95);
-    }
-
-    .clickable.silly {
-      animation: sillyEffect 0.6s ease-out;
+    .silly {
+      animation: sillyEffect 0.3s ease-out;
     }
 
     @keyframes sillyEffect {
@@ -58,7 +59,7 @@
       position: absolute;
       pointer-events: none;
       font-size: 1.5em;
-      animation: pop 0.6s ease-out forwards;
+      animation: pop 0.4s ease-out forwards;
       color: hotpink;
     }
 
@@ -66,36 +67,79 @@
       0% { opacity: 1; transform: translateY(0) scale(1); }
       100% { opacity: 0; transform: translateY(-40px) scale(1.5); }
     }
+
+    .upgrades {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .upgrades button {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #333;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .upgrades button:hover {
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
 
   <h1>Disc Clicker</h1>
   <div class="counter">Clicks: <span id="clickCount">0</span></div>
+  <div class="power">Click Power: <span id="clickPower">1</span></div>
   <img src="https://cdn.discordapp.com/attachments/1389956766091186196/1393986325224357898/image.png?ex=68752a6e&is=6873d8ee&hm=e1cc47a8eb999342275fc965ef5350c1dac47bfe2e7075082febbfd8af963f7f&" alt="Click Me!" class="clickable" onclick="handleClick(event)">
+
+  <div class="upgrades">
+    <button onclick="upgradePower(1)">Upgrade +1</button>
+    <button onclick="upgradePower('double')">Double Power</button>
+  </div>
 
   <script>
     let count = 0;
+    let power = 1;
+
     const counter = document.getElementById('clickCount');
+    const powerDisplay = document.getElementById('clickPower');
     const image = document.querySelector('.clickable');
 
     function handleClick(e) {
-      count++;
+      count += power;
       counter.textContent = count;
 
-      // Add silly animation class
+      // Reset and replay animation
+      image.classList.remove('silly');
+      void image.offsetWidth; // Force reflow
       image.classList.add('silly');
-      setTimeout(() => image.classList.remove('silly'), 600);
 
-      // Create sparkle effect
+      // Sparkle effect
       const sparkle = document.createElement('div');
       sparkle.className = 'sparkle';
-      sparkle.textContent = '+1';
+      sparkle.textContent = `+${power}`;
       sparkle.style.left = `${e.clientX}px`;
       sparkle.style.top = `${e.clientY}px`;
       document.body.appendChild(sparkle);
 
-      setTimeout(() => sparkle.remove(), 600);
+      setTimeout(() => sparkle.remove(), 400);
+    }
+
+    function upgradePower(type) {
+      if (type === 'double') {
+        power *= 2;
+      } else {
+        power += type;
+      }
+      powerDisplay.textContent = power;
     }
   </script>
 
